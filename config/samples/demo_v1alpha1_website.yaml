@@ -1,0 +1,8 @@
+apiVersion: demo.homelab.io/v1alpha1
+kind: Website
+metadata:
+  name: website-sample
+spec:
+  image: nginx:latest
+  replicas: 2
+  port: 80
