@@ -1,135 +1,243 @@
-# projects
-// TODO(user): Add simple overview of use/purpose
+# Website Kubernetes Operator
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+A production-ready Kubernetes Operator built with **Go** and **Kubebuilder** that automates website deployment and lifecycle management using a custom Kubernetes resource.
+
+The operator follows the Kubernetes Operator pattern and continuously reconciles the desired state of a website by creating and managing the required Kubernetes resources automatically.
+
+---
+
+## Features
+
+- Custom Resource Definition (CRD) for Website
+- Automatic Deployment creation
+- Automatic Service creation
+- Automatic Ingress creation
+- Automatic TLS certificate provisioning
+- cert-manager integration
+- Prometheus ServiceMonitor support
+- Horizontal Pod Autoscaler (HPA)
+- NetworkPolicy generation
+- Status updates on Custom Resources
+- Kubernetes Events
+- Finalizers for cleanup
+- Leader Election support
+- RBAC configuration
+- Production-ready reconciliation loop
+
+---
+
+## Architecture
+
+```
+                    Website Custom Resource
+                              │
+                              ▼
+                   Website Controller (Operator)
+                              │
+      ┌─────────────┬──────────┼──────────┬─────────────┐
+      │             │          │          │             │
+      ▼             ▼          ▼          ▼             ▼
+ Deployment      Service    Ingress   Certificate   NetworkPolicy
+      │             │          │          │             │
+      └─────────────┴──────────┴──────────┴─────────────┘
+                              │
+                              ▼
+                       Running Website
+```
+
+---
+
+## Custom Resource Example
+
+```yaml
+apiVersion: apps.homelab.io/v1alpha1
+kind: Website
+metadata:
+  name: demo-site
+
+spec:
+  image: nginx:latest
+
+  replicas: 2
+
+  port: 80
+
+  hostname: demo.example.com
+
+  tls:
+    enabled: true
+
+  monitoring:
+    enabled: true
+```
+
+---
+
+## Resources Managed
+
+The operator automatically creates and manages:
+
+- Deployment
+- Service
+- Ingress
+- TLS Certificate
+- Secret
+- HorizontalPodAutoscaler
+- ServiceMonitor
+- NetworkPolicy
+
+---
+
+## Tech Stack
+
+- Go
+- Kubebuilder
+- controller-runtime
+- Kubernetes API
+- Custom Resource Definitions (CRDs)
+- cert-manager
+- Prometheus Operator
+- Docker
+- Helm
+- Kind / Minikube / Kubernetes
+
+---
+
+## Project Structure
+
+```
+.
+├── api/
+├── cmd/
+├── config/
+├── controllers/
+├── hack/
+├── internal/
+├── pkg/
+├── test/
+├── Dockerfile
+├── Makefile
+└── README.md
+```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
-- go version v1.24.6+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+- Go 1.24+
+- Docker
+- Kubectl
+- Kind / Minikube / Kubernetes Cluster
+- Kubebuilder
+- cert-manager
+- Prometheus Operator
 
-```sh
-make docker-build docker-push IMG=<some-registry>/projects:tag
+### Clone Repository
+
+```bash
+git clone https://github.com/<your-username>/website-operator.git
+
+cd website-operator
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+### Install CRDs
 
-**Install the CRDs into the cluster:**
-
-```sh
+```bash
 make install
 ```
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+### Run Locally
 
-```sh
-make deploy IMG=<some-registry>/projects:tag
+```bash
+make run
 ```
 
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
+### Build Image
 
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
+```bash
+make docker-build IMG=<your-image>
 ```
 
->**NOTE**: Ensure that the samples has default values to test it out.
+### Deploy Operator
 
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
-
-```sh
-kubectl delete -k config/samples/
+```bash
+make deploy IMG=<your-image>
 ```
 
-**Delete the APIs(CRDs) from the cluster:**
+---
 
-```sh
-make uninstall
-```
+## Operator Workflow
 
-**UnDeploy the controller from the cluster:**
+1. User creates a Website Custom Resource.
+2. The controller detects the new resource.
+3. Deployment is created.
+4. Service is created.
+5. Ingress is configured.
+6. TLS certificate is requested.
+7. ServiceMonitor is created.
+8. HPA is configured.
+9. NetworkPolicy is applied.
+10. Status is continuously reconciled.
 
-```sh
-make undeploy
-```
+---
 
-## Project Distribution
+## Roadmap
 
-Following the options to release and provide this solution to the users.
+### Phase 1
 
-### By providing a bundle with all YAML files
+- Website Operator
+- Deployment automation
+- Service automation
+- Ingress automation
+- TLS support
 
-1. Build the installer for the image built and published in the registry:
+### Phase 2
 
-```sh
-make build-installer IMG=<some-registry>/projects:tag
-```
+- ConfigMap management
+- Secret management
+- Vault integration
+- Health monitoring
 
-**NOTE:** The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without its
-dependencies.
+### Phase 3
 
-2. Using the installer
+- AI-powered security scanning
+- Kubernetes security recommendations
+- Compliance reports
+- Risk scoring
+- Web dashboard
 
-Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
-the project, i.e.:
+### Phase 4
 
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/projects/<tag or branch>/dist/install.yaml
-```
+- Multi-agent architecture
+- OIDC authentication
+- Keycloak integration
+- React frontend
+- PostgreSQL backend
+- AI-powered Kubernetes assistant
 
-### By providing a Helm Chart
+---
 
-1. Build the chart using the optional helm plugin
+## Learning Objectives
 
-```sh
-kubebuilder edit --plugins=helm/v2-alpha
-```
+This project demonstrates:
 
-2. See that a chart was generated under 'dist/chart', and users
-can obtain this solution from there.
+- Kubernetes Operators
+- Controller Runtime
+- Reconciliation Loop
+- Custom Resources
+- Status Management
+- Owner References
+- Finalizers
+- Watches
+- Events
+- Leader Election
+- Admission Webhooks
+- Production-grade Kubernetes development
 
-**NOTE:** If you change the project, you need to update the Helm Chart
-using the same command above to sync the latest changes. Furthermore,
-if you create webhooks, you need to use the above command with
-the '--force' flag and manually ensure that any custom configuration
-previously added to 'dist/chart/values.yaml' or 'dist/chart/manager/manager.yaml'
-is manually re-applied afterwards.
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+---
 
 ## License
 
-Copyright 2026.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
+MIT
